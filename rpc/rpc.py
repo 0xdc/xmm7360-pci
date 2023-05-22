@@ -15,7 +15,7 @@ def asn_int4(val):
 
 
 class XMMRPC(object):
-    def __init__(self, path='/dev/xmm0/rpc'):
+    def __init__(self, path='/dev/wwan0xmmrpc0'):
         self.fp = os.open(path, os.O_RDWR | os.O_SYNC)
 
         # loop over 1..255, excluding 0
@@ -60,7 +60,7 @@ class XMMRPC(object):
 
         assert total_length + 4 == len(header) + len(body)
 
-        print(binascii.hexlify(header + body))
+        #print(binascii.hexlify(header + body))
         ret = os.write(self.fp, header + body)
         if ret < len(header + body):
             print("write error: %d", ret)
