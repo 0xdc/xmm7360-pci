@@ -79,7 +79,7 @@ try:
 
     ipr.route('add',
               dst='default',
-              priority=cfg.metric,
+              priority=1000,
               oif=idx)
 except ImportError:
     import subprocess
@@ -89,15 +89,6 @@ except ImportError:
     subprocess.run(["ip", "addr",  "add", ip_addr, "dev", "wwan0"])
     subprocess.run(["ip", "route", "add", "default", "dev", "wwan0", "metric", "1024", "scope", "global"])
     subprocess.run(["resolvectl", "dns", "wwan0"] + list(map(str, dns_values['v4'] + dns_values['v6'])))
-
-"""
-# Add DNS values to /etc/resolv.conf
-if not cfg.noresolv:
-    with open('/etc/resolv.conf', 'a') as resolv:
-        resolv.write('\n# Added by xmm7360\n')
-        for dns in dns_values['v4'] + dns_values['v6']:
-            resolv.write('nameserver %s\n' % dns)
-"""
 
 # this gives us way too much stuff, which we need
 pscr = r.execute('UtaMsCallPsConnectReq',

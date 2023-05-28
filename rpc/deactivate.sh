@@ -7,4 +7,7 @@ rmmod iosm wwan
 tee <<<1 "/sys/bus/pci/devices/0000:01:00.0/reset"
 tee <<<1 "/sys/bus/pci/devices/0000:01:00.0/remove"
 
-#tee <<<1 "/sys/bus/pci/rescan"
+tee <<<1 "/sys/bus/pci/rescan"
+modprobe iosm
+
+sleep 5
