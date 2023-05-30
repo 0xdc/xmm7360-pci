@@ -4,6 +4,7 @@ from os.path import join, abspath, dirname
 import uuid
 import socket
 import struct
+import subprocess
 import sys
 import time
 
@@ -82,13 +83,12 @@ try:
               priority=1000,
               oif=idx)
 except ImportError:
-    import subprocess
-
     subprocess.run(["ip", "addr",  "flush", "dev", "wwan0"])
     subprocess.run(["ip", "link",  "set", "dev", "wwan0", "up"])
     subprocess.run(["ip", "addr",  "add", ip_addr, "dev", "wwan0"])
     subprocess.run(["ip", "route", "add", "default", "dev", "wwan0", "metric", "1024", "scope", "global"])
-    subprocess.run(["resolvectl", "dns", "wwan0"] + list(map(str, dns_values['v4'] + dns_values['v6'])))
+
+subprocess.run(["resolvectl", "dns", "wwan0"] + list(map(str, dns_values['v4'] + dns_values['v6'])))
 
 # this gives us way too much stuff, which we need
 pscr = r.execute('UtaMsCallPsConnectReq',
