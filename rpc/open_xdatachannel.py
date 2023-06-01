@@ -77,10 +77,9 @@ try:
              index=idx,
              address=ip_addr)
 
-
     ipr.route('add',
               dst='default',
-              priority=1000,
+              priority=1024,
               oif=idx)
 except ImportError:
     subprocess.run(["ip", "addr",  "flush", "dev", "wwan0"])

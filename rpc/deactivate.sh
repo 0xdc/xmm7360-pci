@@ -12,8 +12,6 @@ echo 1 > "/sys/bus/pci/rescan"
 
 modprobe iosm
 
-until ip l | grep -q wwan0; do
+until ip link list dev wwan0; do
 	sleep 1
 done
-
-ip link list dev wwan0
