@@ -63,16 +63,26 @@ while True:
 logging.info("IP address: " + str(ip_addr))
 logging.info("DNS server(s): " + ', '.join(map(str, dns_values['v4'] + dns_values['v6'])))
 
+def tc_qdisc(device):
+    # incoming
+    subprocess.run(["tc", "qdisc", "add",       "dev", "wwan0", "ingress"])
+    subprocess.run(["ip", "link",  "set",       "dev", device, "up"])
+    subprocess.run(["tc", "qdisc",  "replace",  "dev", device,  "root", "cake", "bandwidth", "56kbit", "satellite", "ingress"])
+    #subprocess.run(["tc", "filter", "add",  "dev", "wwan0", "parent", "ffff:", "basic", "action", "mirred", "egress", "redirect", "dev", device])
+
+    # outgoing
+    subprocess.run(["tc", "qdisc", "replace", "dev", "wwan0", "root", "cake", "bandwidth", "48kbit", "satellite", "ack-filter"])
+
 try:
     from pyroute2 import IPRoute
     ipr = IPRoute()
 
     idx = ipr.link_lookup(ifname='wwan0')[0]
 
-    ipr.flush_addr(index=idx)
     ipr.link('set',
              index=idx,
              state='up')
+    tc_qdisc("wwan")
     ipr.addr('add',
              index=idx,
              address=ip_addr)
@@ -82,8 +92,8 @@ try:
               priority=1024,
               oif=idx)
 except ImportError:
-    subprocess.run(["ip", "addr",  "flush", "dev", "wwan0"])
     subprocess.run(["ip", "link",  "set", "dev", "wwan0", "up"])
+    tc_qdisc("wwan")
     subprocess.run(["ip", "addr",  "add", ip_addr, "dev", "wwan0"])
     subprocess.run(["ip", "route", "add", "default", "dev", "wwan0", "metric", "1024", "scope", "global"])
 
